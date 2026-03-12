@@ -5,7 +5,7 @@ Neon Bikes — Leave your trail, own the grid. Go head-to-head against a CPU lig
 
 **Author:** wickedNull  
 **Category:** Games  
-**Version:** 1.1
+**Version:** Beta 0.4.0
 
 Light cycle arena game for the Hak5 WiFi Pineapple Pager. Race your neon trail against a CPU opponent — first to crash loses.
 
