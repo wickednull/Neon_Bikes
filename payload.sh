@@ -1,8 +1,8 @@
 #!/bin/bash
 # Title: Neon Bikes
-# Description: Light cycle arena game - race your neon trail against the CPU
+# Description: Neon Bikes — Leave your trail, own the grid. Go head-to-head against a CPU light cycle in this retro arcade game built for the WiFi Pineapple Pager. Dodge walls, outlast your opponent, and light up the arena. Steer with the D-Pad. GREEN to start. RED to quit. Game on.
 # Author: wickedNull
-# Version: 1.1
+# Version: 1.2
 # Category: Games
 
 PAYLOAD_DIR="/root/payloads/user/games/neon_bikes"
@@ -24,7 +24,6 @@ done
 
 if [ "$PAGERCTL_FOUND" = false ]; then
     LOG "red" "pagerctl not found! Install PAGERCTL utility first."
-    WAIT_FOR_INPUT >/dev/null 2>&1
     exit 1
 fi
 
@@ -39,33 +38,16 @@ fi
 export PATH="/mmc/usr/bin:/mmc/usr/sbin:$PATH"
 export LD_LIBRARY_PATH="$PAYLOAD_DIR/lib:/mmc/usr/lib:/mmc/lib:$LD_LIBRARY_PATH"
 export PYTHONPATH="$PAYLOAD_DIR/lib:$PAYLOAD_DIR:$PYTHONPATH"
-# Do NOT set PYTHONHOME — breaks MMC python stdlib lookup
 
 PYTHON=$(command -v python3)
 if [ -z "$PYTHON" ]; then
     LOG "red" "python3 not found!"
-    WAIT_FOR_INPUT >/dev/null 2>&1
     exit 1
 fi
 
-# ── Splash ───────────────────────────────────────────────────────────────────
-LOG "cyan" "NEON BIKES"
-LOG "" "by wickedNull"
-LOG "" ""
-LOG "green" "Light cycle arena — you vs CPU"
-LOG "" ""
-LOG "" "  D-PAD  → Steer"
-LOG "" "  GREEN  → Start / Restart"
-LOG "" "  RED    → Quit / Back"
-LOG "" ""
-LOG "yellow" "Press GREEN to start..."
-WAIT_FOR_INPUT >/dev/null 2>&1
-
 # ── Stop pager service, hand off to Python ───────────────────────────────────
-SPINNER_ID=$(START_SPINNER "Loading Neon Bikes...")
 /etc/init.d/pineapplepager stop 2>/dev/null
 sleep 0.5
-STOP_SPINNER "$SPINNER_ID" 2>/dev/null
 
 "$PYTHON" "$PAYLOAD_DIR/neon_bikes.py" "$PAYLOAD_DIR/lib" > "$LOG_FILE" 2>&1
 EXIT_CODE=$?
@@ -74,7 +56,6 @@ EXIT_CODE=$?
 /etc/init.d/pineapplepager start 2>/dev/null
 
 if [ $EXIT_CODE -ne 0 ]; then
-    LOG "red" "Neon Bikes exited with error (code $EXIT_CODE)"
-    LOG "red" "Check /tmp/neon_bikes.log for details"
-    WAIT_FOR_INPUT >/dev/null 2>&1
+    LOG "red" "Neon Bikes crashed (code $EXIT_CODE)"
+    LOG "red" "Check /tmp/neon_bikes.log"
 fi
